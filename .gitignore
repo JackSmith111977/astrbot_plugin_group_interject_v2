@@ -1,0 +1,22 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# ---- 运行时数据（不入库）----
+data/
+*.log
+*.local.json
+.env
+.env.*
+
+# ---- 操作系统 / 编辑器 / 前端依赖 ----
+Thumbs.db
+desktop.ini
+.DS_Store
+.idea/
+.vscode/
+node_modules/

@@ -1,0 +1,8 @@
+{
+  "views": {
+    "status": {
+      "title": "Interject Control v2",
+      "description": "Hot config and Episode monitoring: hot/cold context, summary FIFO, decisions and cooldowns"
+    }
+  }
+}

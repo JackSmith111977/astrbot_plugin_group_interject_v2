@@ -1,0 +1,8 @@
+{
+  "views": {
+    "status": {
+      "title": "插话控制台 v2",
+      "description": "配置热生效与 Episode 监控：hot/cold 上下文、摘要 FIFO、决策与冷却"
+    }
+  }
+}

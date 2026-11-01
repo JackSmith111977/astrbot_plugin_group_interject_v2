@@ -1,0 +1,2 @@
+# Pillow is already a core AstrBot dependency; listed here for standalone installs.
+pillow>=11.2.1

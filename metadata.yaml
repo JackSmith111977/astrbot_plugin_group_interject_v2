@@ -1,0 +1,33 @@
+name: astrbot_plugin_group_interject_v2
+display_name: 群聊自然插话
+short_desc: 在群聊出现自然切口时，克制地接一句话；默认沉默，可灰度、可调频。
+desc: |
+  **让 Bot 像群友一样接话，而不是每句都回。**
+
+  插件持续观察群消息窗口，在出现自然切口、冷却满足且没有定向消息打断时，
+  决定是否插一句话。默认 `dry_run=true`（只判定、只写日志、不发送），
+  确认效果后一键切换为实发。
+
+  核心机制：
+  - Episode 状态机：QUIET → OBSERVING → CANDIDATE → ENGAGED，沉默是默认结果
+  - 频率不变量：一个窗口最多一次判定、一次发送；发送后重新 arm，无小时配额
+  - 软上限 + 退避：达到 burst 上限后进入慢速准入（等待时间 + 新增消息数双条件）
+  - 定向消息（@bot / 引用 bot / 唤醒昵称）单独处理；@别人只作为上下文
+  - 可选只读工具：仅 web_search 一类前缀，最多 3 步、20 秒超时
+  - 图片描述：可关闭；开启时复用 AstrBot 的图片描述模型，把群聊顶层图片转成一句文本
+  - 长期记忆桥：可关闭；开启时把插话以 assistant 身份写入已安装的 LivingMemory
+
+  附带 WebUI 控制台：热更新配置、Episode 监控、只读试判。
+version: 1.0.1
+author: JackSmith111977
+repo: https://github.com/JackSmith111977/astrbot_plugin_group_interject_v2
+astrbot_version: ">=4.24,<5"
+support_platforms:
+  - aiocqhttp
+tags:
+  - qq
+  - onebot
+  - group-chat
+  - proactive
+social_link: https://github.com/JackSmith111977
+logo: logo.png

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>插话控制台 v2</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="grid-bg" aria-hidden="true"></div>
+    <main class="shell">
+      <header class="top">
+        <div>
+          <div class="eyebrow">GROUP INTERJECT / EPISODE STATE MACHINE</div>
+          <h1>插话控制台 <span>v2</span></h1>
+          <p class="sub">配置热生效 · hot/cold 上下文 · 只读试判 · 无小时配额</p>
+        </div>
+        <div class="top-actions">
+          <span class="chip" id="mode-chip">MODE —</span>
+          <span class="chip" id="dry-chip">DRY —</span>
+          <span class="chip" id="conn">CONNECTING</span>
+          <button id="refresh" class="btn" type="button">刷新</button>
+        </div>
+      </header>
+
+      <nav class="tabs" id="tabs">
+        <button class="tab active" data-tab="config" type="button">配置</button>
+        <button class="tab" data-tab="monitor" type="button">监控</button>
+      </nav>
+
+      <section class="panel tab-panel" id="panel-config">
+        <div class="panel-head">
+          <div>
+            <div class="panel-kicker">CONFIGURATION / HOT APPLY</div>
+            <h2>插件配置</h2>
+          </div>
+          <div class="panel-actions">
+            <span class="dirty" id="dirty" hidden>UNSAVED</span>
+            <button id="reset" class="btn btn-ghost" type="button">重置</button>
+            <button id="save" class="btn btn-primary" type="button">保存并生效</button>
+          </div>
+        </div>
+        <div class="config-tabs" id="config-tabs" role="tablist"></div>
+        <div class="config-panes" id="config-panes"></div>
+        <p class="note">配置项按类别分 tab；同一 tab 内再按标题分组。保存即时生效；AstrBot 可能自动重载插件（无需手动重启容器），重载会清空内存窗口。</p>
+      </section>
+
+      <section class="panel tab-panel" id="panel-monitor" hidden>
+        <div class="panel-head">
+          <div>
+            <div class="panel-kicker">TELEMETRY / COLD CONTEXT</div>
+            <h2>运行监控</h2>
+          </div>
+          <span class="muted" id="server-time">--:--:--</span>
+        </div>
+        <section class="summary" id="summary"></section>
+        <div id="groups" class="groups">
+          <div class="empty">等待插件数据…</div>
+        </div>
+        <div class="panel-head probe-head">
+          <div>
+            <div class="panel-kicker">READ-ONLY PROBE</div>
+            <h2>只读试判</h2>
+          </div>
+          <span class="muted">不发送、不消耗冷却</span>
+        </div>
+        <div class="probe-row">
+          <select id="umo"></select>
+          <button id="probe" class="btn" type="button">试判当前窗口</button>
+        </div>
+        <pre id="probe-output" class="probe-output">选择群后点击试判。</pre>
+      </section>
+
+      <div class="toast" id="toast" hidden></div>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>

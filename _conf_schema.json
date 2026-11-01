@@ -1,0 +1,176 @@
+{
+  "enable": {
+    "description": "插件总开关",
+    "type": "bool",
+    "default": true,
+    "hint": "关闭后不监听群消息、不判定、不发送。",
+    "obvious_hint": true
+  },
+  "mode": {
+    "description": "参与频率模式",
+    "type": "string",
+    "default": "balanced",
+    "options": ["quiet", "balanced", "active"],
+    "hint": "quiet 更克制、balanced 平衡、active 更活跃；选择档位后可在 WebUI 的「运行 → 自定义参数」展开覆盖 9 个核心频率参数。"
+  },
+  "custom": {
+    "description": "自定义频率覆盖（可选）",
+    "type": "object",
+    "default": {},
+    "hint": "启用后覆盖当前档位的 9 个核心参数；未列出的 debounce、episode gap 等内部时序仍沿用当前档位。",
+    "items": {
+      "enabled": {
+        "description": "启用自定义覆盖",
+        "type": "bool",
+        "default": false,
+        "hint": "关闭时完全使用当前 quiet/balanced/active 档位。",
+        "obvious_hint": true
+      },
+      "window_size": {
+        "description": "热窗口消息数",
+        "type": "int",
+        "default": 40,
+        "min": 10,
+        "max": 120,
+        "step": 5,
+        "hint": "Admission 只读这个窗口；越大上下文越多。"
+      },
+      "window_minutes": {
+        "description": "热窗口时间跨度（分钟）",
+        "type": "int",
+        "default": 15,
+        "min": 3,
+        "max": 60,
+        "step": 1,
+        "hint": "早于该跨度的消息会被裁到 cold summary。"
+      },
+      "min_messages": {
+        "description": "触发候选所需新消息数",
+        "type": "int",
+        "default": 3,
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "hint": "越小越活跃；不能大于热窗口消息数。"
+      },
+      "cooldown_seconds": {
+        "description": "发送后冷却（秒）",
+        "type": "int",
+        "default": 420,
+        "min": 30,
+        "max": 3600,
+        "step": 30,
+        "hint": "越小越活跃；发送后必须出现新消息才会重新候选。"
+      },
+      "judge_cooldown_seconds": {
+        "description": "判定冷却（秒）",
+        "type": "int",
+        "default": 60,
+        "min": 10,
+        "max": 600,
+        "step": 10,
+        "hint": "silent 后的再次判定间隔，越小越活跃。"
+      },
+      "min_confidence": {
+        "description": "最低置信度",
+        "type": "float",
+        "default": 0.55,
+        "min": 0.2,
+        "max": 0.95,
+        "step": 0.01,
+        "hint": "越低越容易接话；过高会长期 silent。"
+      },
+      "episode_max_turns": {
+        "description": "话题内最多插话轮次",
+        "type": "int",
+        "default": 3,
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "hint": "越大越活跃；达到该轮次后进入慢速准入。"
+      },
+      "episode_rest_seconds": {
+        "description": "慢速准入起步间隔（秒）",
+        "type": "int",
+        "default": 900,
+        "min": 60,
+        "max": 3600,
+        "step": 60,
+        "hint": "达到 burst 后，至少等待这么久才允许额外一条；之后每次额外发言会再拉长 300 秒，最多 30 分钟。"
+      },
+      "episode_reentry_messages": {
+        "description": "慢速重入所需新增消息数",
+        "type": "int",
+        "default": 25,
+        "min": 1,
+        "max": 100,
+        "step": 1,
+        "hint": "达到 burst 后，除等待时间外，还需要这么多条新群消息才允许额外一条。"
+      }
+    }
+  },
+  "dry_run": {
+    "description": "只判定不发送（灰度第一阶段）",
+    "type": "bool",
+    "default": true,
+    "hint": "只写日志和统计，不发送消息、不写长期记忆；切换实发前先观察一段时间。",
+    "obvious_hint": true
+  },
+  "provider_id": {
+    "description": "判定使用的 LLM Provider",
+    "type": "string",
+    "default": "",
+    "_special": "select_provider",
+    "hint": "留空=跟随当前会话模型；建议使用轻量模型，成本更低。"
+  },
+  "image_caption_enable": {
+    "description": "图片描述入窗口",
+    "type": "bool",
+    "default": true,
+    "hint": "开启后会把群聊顶层图片交给 AstrBot 的图片描述模型生成一句文本，供判定与摘要使用；关闭后图片只保留 [图片] 占位。",
+    "obvious_hint": true
+  },
+  "memory_bridge_enable": {
+    "description": "写入长期记忆（LivingMemory）",
+    "type": "bool",
+    "default": true,
+    "hint": "开启后会把本插件发出的插话以 assistant 消息写入已安装的 LivingMemory 会话存储；未安装时自动跳过。关闭后不写入任何外部存储。",
+    "obvious_hint": true
+  },
+  "group_whitelist": {
+    "description": "生效的群（白名单）",
+    "type": "list",
+    "default": [],
+    "hint": "填群号或完整 UMO；留空=所有群，黑名单优先。首次使用建议先只填一个测试群，例如 100000001。"
+  },
+  "group_blacklist": {
+    "description": "不生效的群（黑名单）",
+    "type": "list",
+    "default": [],
+    "hint": "填群号或完整 UMO；优先于白名单。"
+  },
+  "ignore_senders": {
+    "description": "忽略的发送者 QQ 号",
+    "type": "list",
+    "default": [],
+    "hint": "这些人的消息不进入插话窗口。"
+  },
+  "wake_names": {
+    "description": "唤醒昵称（不 @ 也叫醒主 Agent）",
+    "type": "list",
+    "default": [],
+    "hint": "消息以这些昵称开头时转交主 Agent；例如 鲸鲸、鱼片、蓝色大肥鱼。"
+  },
+  "quiet_hours": {
+    "description": "静默时段",
+    "type": "string",
+    "default": "",
+    "hint": "例：01:00-08:00；支持逗号分隔多个、跨零点。留空=不启用。"
+  },
+  "extra_rules": {
+    "description": "追加的插话风格/禁忌",
+    "type": "text",
+    "default": "",
+    "hint": "追加到判定 prompt 末尾，例如「多用短句、不要用感叹号」。"
+  }
+}
